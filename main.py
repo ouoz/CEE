@@ -5,7 +5,7 @@ from scipy.signal import argrelmax
 
 # interphone setting
 CHUNK = 1024
-RATE = 8000    # sampling rate
+RATE = 48000    # sampling rate
 dt = 1.0/RATE
 freq = np.linspace(0,1.0/dt,CHUNK)
 fn = 1.0/dt/2    # nyquist freq
@@ -55,7 +55,7 @@ if __name__=='__main__':
             ndarray = np.frombuffer(input, dtype='int16')
             abs_array = np.abs(ndarray)/32768
         
-            if abs_array.max() > 0.001:
+            if abs_array.max() > 0.01:
                 freq_max = getMaxFreqFFT(ndarray, CHUNK, freq)
                 print("Max Frequency:", freq_max, "Hz")
                 h,l = detectDualToneInOctave(freq_max, FREQ_HIGH_BASE, FREQ_LOW_BASE, FREQ_ERR)
@@ -67,7 +67,7 @@ if __name__=='__main__':
                     cnt += 1
                     detect_high = True
                     print("First Part Detected")
-                if l and cnt > 1:
+                elif l and cnt > 2:
                     detect_low = True
                     print("Second Part Detected")
     
