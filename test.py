@@ -28,7 +28,7 @@ def getMaxFreqFFT(sound, chunk, freq):
     f_peak = f_abs[peak_args]
     f_peak_argsort = f_peak.argsort()[::-1]
     peak_args_sort = peak_args[0][f_peak_argsort]
-    return [freq[peak_args_sort[0]], freq[peak_args_sort[1]], freq[peak_args_sort[2]], freq[peak_args_sort[0]], freq[peak_args_sort[0]]] 
+    return [freq[peak_args_sort[0]], freq[peak_args_sort[1]], freq[peak_args_sort[2]], freq[peak_args_sort[3]], freq[peak_args_sort[4]]] 
 
 
 if __name__=='__main__':
