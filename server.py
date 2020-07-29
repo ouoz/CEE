@@ -10,7 +10,7 @@ class Main:
     #""" Main Class """
 
     # Setting & Connect
-    ras = RN42("ras", "9C:5C:F9:CD:A7:02", 1)
+    ras = RN42("ras", "9C:5C:F9:B2:1C:DE", 1)
     ras.connectBluetooth(ras.bdAddr,ras.port)
 
     print("Entering main loop now")
