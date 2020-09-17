@@ -1,8 +1,8 @@
 import bluetooth
 import threading
 
-import Record
-import Detect
+import BlueRecord
+import BlueDetect
 
 def main():
     PORT = 1
@@ -10,22 +10,42 @@ def main():
     server_sock.bind(('', PORT))
     server_sock.listen(1) # backlog: 接続待ち受け数
     
-    detect = threading.Thread(target=Detect.detect)
-    record = threading.Thread(target=Record.record)
+    #Detect = BlueDetect.Detecting()
+    #Record = BlueRecord.Recording()
+    
+    #detect = threading.Thread(target=Detect.detect)
+    #record = threading.Thread(target=Record.record)
     
     client_sock, client_addrport = server_sock.accept() # blocking until connection
-    
+    dalive = False
+    ralive = False
     while True: 
         data = client_sock.recv(1024)
         #print(data) # bytes
         rec = data.decode('ascii')
-        if rec == "d" and not detect.is_alive():
+        if rec == "d":
+            Detect = BlueDetect.Detecting()
+            detect = threading.Thread(target=Detect.detect)
             detect.start()
-        if rec == "r" and not record.is_alive():
+            dalive = True
+            
+        if rec == "r":
+            Record = BlueRecord.Recording()
+            record = threading.Thread(target=Record.record)
             record.start()
+            ralive = True
+            
         if rec == "s":
-            Detect.set_exit()
-            Record.set_exit()
+            if dalive:
+                Detect.set_exit()
+                detect.join()
+                dalive = False
+            if ralive:
+                Record.set_exit()
+                record.join()
+                ralive = False
+            #Detect.set_exit()
+            ##Record.set_exit()
             print("stop")
 
 

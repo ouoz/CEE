@@ -15,7 +15,7 @@ FREQ_ERR = 0.02         # allowable freq error
 #variable
 detect_high = False
 detect_low = False
-streak = 5
+streak = 10
 
 out_fn = "peeks.txt"
 
@@ -28,7 +28,7 @@ def getMaxFreqFFT(sound, chunk, freq):
     f_peak = f_abs[peak_args]
     f_peak_argsort = f_peak.argsort()[::-1]
     peak_args_sort = peak_args[0][f_peak_argsort]
-    return [freq[peak_args_sort[0]], freq[peak_args_sort[1]], freq[peak_args_sort[2]], freq[peak_args_sort[3]], freq[peak_args_sort[4]]] 
+    return [freq[peak_args_sort[0]], freq[peak_args_sort[1]], freq[peak_args_sort[2]]] 
 
 
 if __name__=='__main__':
@@ -40,6 +40,7 @@ if __name__=='__main__':
     pos = 0
     peeks = []
     cur = 0
+    last_t = 0
 
 
     while stream.is_active():
@@ -48,8 +49,9 @@ if __name__=='__main__':
             ndarray = np.frombuffer(input, dtype='int16')
             abs_array = np.abs(ndarray)/32768
 
-            if abs_array.max() > 0.01:
+            if abs_array.max() > 0.01125:
                 freq_max = getMaxFreqFFT(ndarray, CHUNK, freq)
+                print(freq_max)
                 
                 if cnt > streak: 
                     flag = False
@@ -69,14 +71,18 @@ if __name__=='__main__':
                         cnt += 1
                         flag = True
                         break
-                if flag: continue
+                    
+                
+                if flag and ((time.time() - last_t) < 0.2):
+                    last_t = time.time()
+                    continue
                 else: 
                     cnt = 0
                     cur = freq_max[0]
+                    last_t = time.time()
     
         except KeyboardInterrupt:
             break
-
 
     with open(out_fn, 'w', encoding = "utf-8-sig") as kaki: 
         for val in peeks: 
